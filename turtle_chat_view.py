@@ -1,12 +1,16 @@
 #2016-2017 PERSONAL PROJECTS: TurtleChat!
 #WRITE YOUR NAME HERE!
-
+#dana ghoul 
 #####################################################################################
 #                                   IMPORTS                                         #
 #####################################################################################
 #import the turtle module
 #import the Client class from the turtle_chat_client module
 #Finally, from the turtle_chat_widgets module, import two classes: Button and TextInput
+import turtle
+from turtle_chat_client import Client
+from turtle_chat_widgets import Button
+from turtle_chat_widgets import TextInput
 #####################################################################################
 #####################################################################################
 
@@ -14,6 +18,34 @@
 #                                   TextBox                                         #
 #####################################################################################
 #Make a class called TextBox, which will be a subclass of TextInput.
+##from turtle_chat_server  import chat_server
+##chat_server()
+
+class TextBox(TextInput) :
+   
+    def draw_box(self):
+        yes = turtle.clone()
+        yes.penup()
+        yes.goto(100,50)
+        yes.pendown()
+        yes.goto(100,-50)
+        yes.goto(-100,-50)
+        yes.goto(-100,50)
+        yes.goto(100,50) 
+ 
+        
+    def write_msg(self):
+      
+        self.writer.clear()
+        if len(self.get_msg()) % self.letters_per_line == 0 :
+           self.new_msg=self.new_msg+"\r"
+        print(self.get_msg())
+        self.writer.write(self.get_msg())
+        
+       
+
+
+    
 #Because TextInput is an abstract class, you must implement its abstract
 #methods.  There are two:
 #
@@ -53,6 +85,18 @@
 #      input: view.  This will be an instance of the View class you will make next
 #      That class will have methods inside of it to help
 #      you send messages and update message displays.
+
+class SendButton(Button):
+    def __init__(self,my_turtle=None,shape=None,pos=(0,-100),view=None):
+        super (SendButton,self).__init__(my_turtle=None,shape=None,pos=(0,-100))
+        self.view=view
+        
+    def fun(self,x=None,y=None):
+        self.view.send_msg()
+        
+        
+       
+
 #####################################################################################
 #####################################################################################
 
@@ -73,6 +117,10 @@ class View:
     _LINE_SPACING=round(_SCREEN_HEIGHT/2/(_MSG_LOG_LENGTH+1))
 
     def __init__(self,username='Me',partner_name='Partner'):
+        self.username=username
+        self.partner_name=partner_name
+        self.my_client=Client()
+        turtle.setup(width=self._SCREEN_WIDTH*2,height=self._SCREEN_WIDTH*2)
         '''
         :param username: the name of this chat user
         :param partner_name: the name of the user you are chatting with
@@ -98,22 +146,29 @@ class View:
         #or at the end of the list using
         #   self.msg_queue.append(a_msg_string)
         self.msg_queue=[]
+       
 
         ###
         #Create one turtle object for each message to display.
-        #You can use the clear() and write() methods to erase
+        #You can use the clear() and write() methods to erase 
         #and write messages for each
         ###
+        self.emli =[]
+        for message in range(self._MSG_LOG_LENGTH):
+            self.emli.append(turtle.clone())
+     
 
         ###
         #Create a TextBox instance and a SendButton instance and
         #Store them inside of this instance
         ###
-
+        self.TBX=TextBox()
+        self.SBTN=SendButton(view=self)
         ###
         #Call your setup_listeners() function, if you have one,
         #and any other remaining setup functions you have invented.
         ###
+        self.setup_listeners()
 
     def send_msg(self):
         '''
@@ -125,10 +180,17 @@ class View:
         It should call self.display_msg() to cause the message
         display to be updated.
         '''
-        pass
+        self.my_client.send(self.TBX.new_msg)
+        self.msg_queue.append(self.TBX.new_msg)
+        self.TBX.clear_msg()
+        self.display_msg()
+        
 
     def get_msg(self):
-        return self.textbox.get_msg()
+        return self.TBX.get_msg()
+        #print('self.msg_queue[0]', self.msg_queue[0])
+        #return self.msg_queue[0]
+        
 
     def setup_listeners(self):
         '''
@@ -158,15 +220,23 @@ class View:
         #or append (to put at the end).
         #
         #Then, call the display_msg method to update the display
+        self.msg_queue.insert(0,msg)
+        self.display_msg()
 
     def display_msg(self):
         '''
         This method should update the messages displayed in the screen.
         You can get the messages you want from self.msg_queue
         '''
-        pass
+        self.emli.clear()
+        display_writer= turtle.clone()
+        display_writer.write(self.msg_queue[0],font=('Arial',15))
+##        self.writer.write(self.msg_queue[0])
 ##############################################################
 ##############################################################
+#turtle.bgpic("project.gif")
+        
+
 
 
 #########################################################

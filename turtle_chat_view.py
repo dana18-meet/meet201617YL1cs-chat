@@ -31,7 +31,8 @@ class TextBox(TextInput) :
         yes.goto(100,-50)
         yes.goto(-100,-50)
         yes.goto(-100,50)
-        yes.goto(100,50) 
+        yes.goto(100,50)
+        yes.hideturtle()
  
         
     def write_msg(self):
@@ -156,6 +157,7 @@ class View:
         self.emli =[]
         for message in range(self._MSG_LOG_LENGTH):
             self.emli.append(turtle.clone())
+      
      
 
         ###
@@ -220,7 +222,7 @@ class View:
         #or append (to put at the end).
         #
         #Then, call the display_msg method to update the display
-        self.msg_queue.insert(0,msg)
+        self.msg_queue.append(msg)
         self.display_msg()
 
     def display_msg(self):
@@ -228,9 +230,10 @@ class View:
         This method should update the messages displayed in the screen.
         You can get the messages you want from self.msg_queue
         '''
-        self.emli.clear()
-        display_writer= turtle.clone()
-        display_writer.write(self.msg_queue[0],font=('Arial',15))
+        self.emli[0].clear()
+        display_writer= self.emli[0]
+        display_writer.write(self.msg_queue[-1],font=('Arial',15))
+     
 ##        self.writer.write(self.msg_queue[0])
 ##############################################################
 ##############################################################
@@ -258,3 +261,6 @@ if __name__ == '__main__':
         turtle.ontimer(check,_WAIT_TIME) #Check recursively
     check()
     turtle.mainloop()
+
+
+
